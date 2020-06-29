@@ -83,6 +83,7 @@ router.post("/int-bank/sessions", function (req, res) {
     if (err) throw err;
    
     var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: result[0].user_id }]} ] } ];
+    res.set('user_id', '1')
     res.set('Content-Type', 'application/xml; charset=utf-8')
     res.send(xml(example4));
     console.log(result[0].user_id)
