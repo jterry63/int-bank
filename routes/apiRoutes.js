@@ -3,6 +3,7 @@ const axios = require("axios");
 const router = require("express").Router();
 const keys = require("../keys.js");
 var connection = require("../config/connection.js");
+var xml = require('xml');
 
 
 
@@ -76,11 +77,15 @@ router.get("/db/user/guid", function (req, res) {
 
 router.post("/int-bank/sessions", function (req, res) {
   
-  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.query.user_id}'`;
+  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.header('user_id')}'`;
 
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
-    res.json(result);
+   
+    var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: result[0].user_id }]} ] } ];
+
+    res.send(xml(example4));
+    console.log(result[0].user_id)
   });
 });
 
