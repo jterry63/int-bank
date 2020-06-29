@@ -77,7 +77,7 @@ router.get("/db/user/guid", function (req, res) {
 
 router.post("/int-bank/sessions", function (req, res) {
   
-  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.body.login}'`;
+  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.body.userkey}'`;
 
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
