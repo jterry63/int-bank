@@ -81,11 +81,8 @@ router.post("/int-bank/sessions", function (req, res) {
 
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
-    let user_id = result
-    var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: result[0].user_id }]} ] } ];
-
-    res.send(xml(example4));
-    console.log(result[0].user_id)
+    res.json(result);
+    console.log(req.body)
   });
 });
 
