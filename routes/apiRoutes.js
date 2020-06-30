@@ -82,11 +82,11 @@ router.post("/int-bank/sessions", function (req, res) {
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
    
-    var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: result[0].user_id }]} ] } ];
+    var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: req.body.mdx.session[0].userkey[0] }]} ] } ];
     
     res.set('Content-Type', 'application/xml; charset=utf-8')
     res.send(xml(example4));
-    console.log(req)
+    console.log(req.body.mdx.session[0].userkey[0])
   });
 });
 
