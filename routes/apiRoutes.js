@@ -20,19 +20,6 @@ router.get("/db/user", function (req, res) {
   });
 });
 
-router.put("/db/user", function (req, res) {
-
-  var dbQuery = `UPDATE users SET user_description = '${req.query.description}' WHERE firebase_id = '${req.query.firebase_id}'`;
-
-  console.log(dbQuery)
-  connection.query(dbQuery, function (err, result) {
-    if (err) throw err;
-    console.log("User Description Successfully Updated!");
-    res.json(result);
-    res.end();
-  });
-
-});
 
 router.post("/db/users", function (req, res) {
 
@@ -47,29 +34,32 @@ router.post("/db/users", function (req, res) {
 
 });
 
-router.put("/db/users", function (req, res) {
+router.post("/db/accounts", function (req, res) {
 
-  var dbQuery = `UPDATE users SET mx_user_id = '${req.query.mx_user_id}' WHERE firebase_id = '${req.query.firebase_id}'`;
+  var dbQuery = "INSERT INTO bank.accounts (account_type, account_name, balance, available_balance, account_number, currency_code, account_id, user_id) VALUES (?,?,?,?,?,?,?,?)";
 
-  console.log(dbQuery)
-  connection.query(dbQuery, function (err, result) {
+  connection.query(dbQuery, [req.query.account_type, req.query.account_name, req.query.balance, req.query.available_balance, req.query.account_number, req.query.currency_code, req.query.account_id, req.query.user_id], function (err, result) {
     if (err) throw err;
-    console.log("User Successfully Updated!");
+    console.log("Account Successfully Saved!");
     res.json(result);
     res.end();
   });
 
 });
 
-router.get("/db/user/guid", function (req, res) {
-  
-  var dbQuery = `SELECT mx_user_id FROM bank.users WHERE firebase_id='${req.query.firebase_id}'`;
+router.post("/db/transactions", function (req, res) {
 
-  connection.query(dbQuery, function (err, result) {
+  var dbQuery = "INSERT INTO bank.transactions (account_type, account_name, balance, available_balance, account_number, currency_code, account_id, user_id) VALUES (?,?,?,?,?,?,?,?)";
+
+  connection.query(dbQuery, [req.query.account_type, req.query.account_name, req.query.balance, req.query.available_balance, req.query.account_number, req.query.currency_code, req.query.account_id, req.query.user_id], function (err, result) {
     if (err) throw err;
-    res.json(result[0].mx_user_id);
+    console.log("Account Successfully Saved!");
+    res.json(result);
+    res.end();
   });
+
 });
+
 
 
 
@@ -77,16 +67,31 @@ router.get("/db/user/guid", function (req, res) {
 
 router.post("/int-bank/sessions", function (req, res) {
   
-  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.body.userkey}'`;
+  var dbQuery = `SELECT user_id FROM bank.users WHERE user_id='${req.body.mdx.session[0].userkey[0]}'`;
 
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
    
-    var example4 = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: req.body.mdx.session[0].userkey[0] }]} ] } ];
+    var session = [ { mdx: [ { _attr: { version: '5.0'} }, { session: [ { key: req.body.mdx.session[0].userkey[0] }]} ] } ];
     
     res.set('Content-Type', 'application/xml; charset=utf-8')
-    res.send(xml(example4));
+    res.send(xml(session));
     console.log(req.body.mdx.session[0].userkey[0])
+  });
+});
+
+router.get("/int-bank/accounts", function (req, res) {
+  
+  var dbQuery = `SELECT account_type, account_name, balance, available_balance, account_number, currency_code, account_id, user_id FROM bank.accounts WHERE user_id='${req.header('MDX-Session-Key')}'`;
+
+  connection.query(dbQuery, function (err, result) {
+    if (err) throw err;
+
+    var account= [ { mdx: [ { _attr: { version: '5.0'} }, { account: [ { id: result[0].account_id }, { type: result[0].account_type }, { name: result[0].account_name }, { balance: result[0].balance }, { available_balance: result[0].available_balance }, { currency_code: result[0].currency_code }]} ] } ];
+    res.set('Content-Type', 'application/xml; charset=utf-8')
+    res.send(xml(account))
+
+    
   });
 });
 
