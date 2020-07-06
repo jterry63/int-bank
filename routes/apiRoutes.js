@@ -102,10 +102,10 @@ router.get("/int-bank/accounts/443/transactions", function (req, res) {
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
 
-    res.json(result)
-    var transaction= [ { mdx: [ { _attr: { version: '5.0'} }, { account: [ { id: result[0].account_id }, { type: result[0].account_type }, { name: result[0].account_name }, { balance: result[0].balance }, { available_balance: result[0].available_balance }, { currency_code: result[0].currency_code }]} ] } ];
-    // res.set('Content-Type', 'application/xml; charset=utf-8')
-    // res.send(xml(account))
+    // res.json(result)
+    var transaction= { mdx: [ { _attr: { version: '5.0'} }, { account: [ {id : [443]}, { transactions: [{ _attr: { start_date: '2020-04-01', page: '1', pages: '1'}, }, {transaction: [ { amount: [25.1]}, { description: ['Transfer']}, { id: ['dfgiejfgief948753']}, { posted_on: ['2020-07-05']}, { status: ['POSTED']}, { transacted_on: ['2020-06-05']}, { type: ['DEBIT']} ]}]}]}]} ;
+    res.set('Content-Type', 'application/xml; charset=utf-8')
+    res.send(xml(transaction))
 
     
   });
