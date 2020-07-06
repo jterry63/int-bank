@@ -49,11 +49,11 @@ router.post("/db/accounts", function (req, res) {
 
 router.post("/db/transactions", function (req, res) {
 
-  var dbQuery = "INSERT INTO bank.transactions (account_type, account_name, balance, available_balance, account_number, currency_code, account_id, user_id) VALUES (?,?,?,?,?,?,?,?)";
+  var dbQuery = "INSERT INTO bank.transactions (transaction_id, transaction_status, transaction_type, amount, transaction_description, transacted_on, posted_on, category, user_id, account_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-  connection.query(dbQuery, [req.query.account_type, req.query.account_name, req.query.balance, req.query.available_balance, req.query.account_number, req.query.currency_code, req.query.account_id, req.query.user_id], function (err, result) {
+  connection.query(dbQuery, [req.query.transaction_id, req.query.transaction_status, req.query.transaction_type, req.query.amount, req.query.transaction_description, req.query.transacted_on, req.query.posted_on, req.query.category, req.query.user_id, req.query.account_id,], function (err, result) {
     if (err) throw err;
-    console.log("Account Successfully Saved!");
+    console.log("Transaction Successfully Saved!");
     res.json(result);
     res.end();
   });
@@ -95,6 +95,21 @@ router.get("/int-bank/accounts", function (req, res) {
   });
 });
 
+router.get("/int-bank/transactions", function (req, res) {
+  
+  var dbQuery = `SELECT transaction_id, transaction_status, transaction_type, amount, transaction_description, transacted_on, posted_on, category, user_id, account_id FROM bank.transactions WHERE account_id='${443}'`;
+
+  connection.query(dbQuery, function (err, result) {
+    if (err) throw err;
+
+    res.json(result)
+    var transaction= [ { mdx: [ { _attr: { version: '5.0'} }, { account: [ { id: result[0].account_id }, { type: result[0].account_type }, { name: result[0].account_name }, { balance: result[0].balance }, { available_balance: result[0].available_balance }, { currency_code: result[0].currency_code }]} ] } ];
+    // res.set('Content-Type', 'application/xml; charset=utf-8')
+    // res.send(xml(account))
+
+    
+  });
+});
 
 
 
