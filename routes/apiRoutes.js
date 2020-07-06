@@ -97,13 +97,13 @@ router.get("/int-bank/accounts", function (req, res) {
 
 router.get("/int-bank/accounts/:account_id/transactions", function (req, res) {
   
-  var dbQuery = `SELECT transaction_id, transaction_status, transaction_type, amount, transaction_description, transacted_on, posted_on, category, user_id, account_id FROM bank.transactions WHERE account_id='${443}'`;
+  var dbQuery = `SELECT transaction_id, transaction_status, transaction_type, amount, transaction_description, transacted_on, posted_on, category, user_id, account_id FROM bank.transactions WHERE account_id='${req.params.account_id}'`;
 
   connection.query(dbQuery, function (err, result) {
     if (err) throw err;
 
   
-    var transaction= { mdx: [ { _attr: { version: '5.0'} }, { account: [ {id : [req.params.account_id]}, { transactions: [{ _attr: { start_date: '2020-04-01', page: '1', pages: '1'}, }, {transaction: [ { amount: [result[0].amount]}, { description: [result[0].transaction_description]}, { id: [result[0].transaction_id]}, { posted_on: [result[0].posted_on]}, { status: ['POSTED']}, { transacted_on: [result[0].transacted_on]}, { type: [result[0].transaction_type]} ]}]}]}]} ;
+    var transaction= { mdx: [ { _attr: { version: '5.0'} }, { account: [ {id : [req.params.account_id]}, { transactions: [{ _attr: { start_date: '2020-04-01', page: '1', pages: '1'}, }, {transaction: [ { amount: [result[0].amount]}, { description: [result[0].transaction_description]}, { id: [result[0].transaction_id]}, { posted_on: [result[0].posted_on]}, { status: [result[0].transaction_status]}, { transacted_on: [result[0].transacted_on]}, { type: [result[0].transaction_type]} ]}]}]}]} ;
     res.set('Content-Type', 'application/xml; charset=utf-8')
     res.send(xml(transaction))
   
