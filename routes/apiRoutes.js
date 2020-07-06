@@ -95,7 +95,7 @@ router.get("/int-bank/accounts", function (req, res) {
   });
 });
 
-router.get("/int-bank/transactions", function (req, res) {
+router.get("/int-bank/accounts/443/transactions", function (req, res) {
   
   var dbQuery = `SELECT transaction_id, transaction_status, transaction_type, amount, transaction_description, transacted_on, posted_on, category, user_id, account_id FROM bank.transactions WHERE account_id='${443}'`;
 
